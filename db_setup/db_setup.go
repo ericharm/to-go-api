@@ -3,15 +3,15 @@ package main
 import (
     "fmt"
     "os"
-    "./db"
+    "../db"
 
     "database/sql"
     _ "github.com/go-sql-driver/mysql"
 )
 
-func create(envConfig map[string]string) {
+func create(env string, envConfig map[string]string) {
     driver := envConfig["driver"]
-    sqlDB, err := sql.Open(driver, db.GetConnectionString(os.Args[1], false))
+    sqlDB, err := sql.Open(driver, db.GetConnectionString(env, false))
     if err != nil {
         fmt.Println(err)
     }
@@ -33,7 +33,10 @@ func create(envConfig map[string]string) {
 }
 
 func main() {
-    env := os.Args[1]
+    env := "development"
+    if len(os.Args) > 1 {
+        env = os.Args[1]
+    }
 
     dbConfig, err := db.MapConfig()
     if err != nil {
@@ -52,7 +55,7 @@ func main() {
     if err != nil {
         fmt.Println(err)
         // create the db if it doesn't exist
-        create(dbConfig[env])
+        create(env, dbConfig[env])
     } else {
         fmt.Println("DB validated")
     }

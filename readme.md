@@ -10,13 +10,15 @@ clone this repo
 
 edit config/database.yml with your mysql credentials
 
-`go run db_setup.go development` to create a database
+`go run db_setup/db_setup.go` to create a database
 
-`go run db_migrate.go development` to create tables
+`go run db_migrate/db_migrate.go` to create tables
 
-`go build main/init.go`
+`go build server.go`
 
-`./init` start the server
+`./server` start the server
+
+the db_setup and db_migrate scripts, along with the server binary can all be run with an environment as defined in config/database.yml, e.g. `./server staging`
 
 install and run the client (coming soon)
 
