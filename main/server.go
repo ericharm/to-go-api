@@ -5,6 +5,6 @@ import (
 )
 
 func main() {
-    fmt.Println("awef")
+    fmt.Println("Pretending to serve")
 }
 
