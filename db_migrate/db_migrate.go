@@ -5,9 +5,6 @@ import (
     "os"
     "../models"
     "../db"
-
-    "github.com/jinzhu/gorm"
-    _ "github.com/jinzhu/gorm/dialects/mysql"
 )
 
 func main() {
@@ -16,14 +13,8 @@ func main() {
         env = os.Args[1]
     }
 
-    dbConfig, err := db.MapConfig()
-    if err != nil {
-        panic(err)
-    }
-
     // open the database
-    envConfig := dbConfig[env]
-    db, err := gorm.Open(envConfig["driver"], db.GetConnectionString(env, true))
+    db, err := db.ConnectGorm(env)
     if err != nil {
         panic(err)
     }
@@ -36,5 +27,4 @@ func main() {
 
     defer db.Close()
 }
-
 

@@ -5,28 +5,16 @@ import (
     "./db"
     "./models"
     "time"
-
-    "github.com/jinzhu/gorm"
-    _ "github.com/jinzhu/gorm/dialects/mysql"
 )
 
 func main() {
-
     env := "development"
     if len(os.Args) > 1 {
         env = os.Args[1]
     }
 
-    // this mapping and opening should be moved to /db
-    // and reimplemented in migrate and setup scripts
-    dbConfig, err := db.MapConfig()
-    if err != nil {
-        panic(err)
-    }
-
     // open the database
-    driver := dbConfig[env]["driver"]
-    db, err := gorm.Open(driver, db.GetConnectionString(env, true))
+    db, err := db.ConnectGorm(env)
     if err != nil {
         panic(err)
     }

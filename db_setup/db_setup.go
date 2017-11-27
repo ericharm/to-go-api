@@ -4,33 +4,7 @@ import (
     "fmt"
     "os"
     "../db"
-
-    "database/sql"
-    _ "github.com/go-sql-driver/mysql"
 )
-
-func create(env string, envConfig map[string]string) {
-    driver := envConfig["driver"]
-    sqlDB, err := sql.Open(driver, db.GetConnectionString(env, false))
-    if err != nil {
-        fmt.Println(err)
-    }
-    defer sqlDB.Close()
-
-    _, err = sqlDB.Exec("CREATE DATABASE " + envConfig["database"])
-    if err == nil {
-        fmt.Printf("DB '%s' Created.\n", envConfig["database"])
-    } else {
-        panic(err)
-    }
-
-    _, err = sqlDB.Exec("USE " + envConfig["database"])
-    if err == nil {
-        fmt.Printf("Using %s\n", envConfig["database"])
-    } else {
-        panic(err)
-    }
-}
 
 func main() {
     env := "development"
@@ -38,28 +12,21 @@ func main() {
         env = os.Args[1]
     }
 
-    dbConfig, err := db.MapConfig()
-    if err != nil {
-        panic(err)
-    }
-
     // open the database
-    driver := dbConfig[env]["driver"]
-    sqlDB, err := sql.Open(driver, db.GetConnectionString(env, true))
+    sqlDb, err := db.ConnectSql(env)
     if err != nil {
         panic(err)
     }
 
     //validate the database exists
-    err = sqlDB.Ping()
+    err = sqlDb.Ping()
     if err != nil {
         fmt.Println(err)
-        // create the db if it doesn't exist
-        create(env, dbConfig[env])
+        db.CreateDatabase(env)
     } else {
         fmt.Println("DB validated")
     }
 
-    defer sqlDB.Close()
+    defer sqlDb.Close()
 }
 
