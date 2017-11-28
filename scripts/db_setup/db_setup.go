@@ -3,7 +3,7 @@ package main
 import (
     "fmt"
     "os"
-    "../db"
+    "../../db"
 )
 
 func main() {

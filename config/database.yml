@@ -5,3 +5,12 @@ development:
   port: "3306"
   user: "root"
   password: ""
+
+production:
+  driver: "mysql"
+  database: "to_go_prod"
+  host: "localhost"
+  port: "3306"
+  user: "root"
+  password: ""
+

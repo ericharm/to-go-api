@@ -1,0 +1,19 @@
+COMMAND=$1
+ENVIRONMENT=$2
+
+if [ "$COMMAND" == "setup" ]; then
+    if [ "$ENVIRONMENT" == "" ]; then
+        go run scripts/db_setup/db_setup.go
+    else
+        go run scripts/db_setup/db_setup.go $ENVIRONMENT
+    fi
+elif [ "$COMMAND" == "migrate" ]; then
+    if [ "$ENVIRONMENT" == "" ]; then
+        go run scripts/db_migrate/db_migrate.go
+    else
+        go run scripts/db_migrate/db_migrate.go $ENVIRONMENT
+    fi
+else
+    echo "Invalid command"
+fi
+

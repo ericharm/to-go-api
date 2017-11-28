@@ -2,9 +2,16 @@ package main
 
 import (
     "os"
+    //"time"
+    "log"
+    "fmt"
+    "html"
+    "net/http"
+
     "./db"
-    "./models"
-    "time"
+    //"./models"
+
+    "github.com/gorilla/mux"
 )
 
 func main() {
@@ -18,17 +25,23 @@ func main() {
     if err != nil {
         panic(err)
     }
-
-    todo := models.Todo{
-        Title:      "My first todo",
-        Body:       "Gotta work",
-        Due:        time.Now(),
-        Completed:  false,
-    }
-
-    db.Create(&todo)
-
     defer db.Close()
 
+    //todo := models.Todo{
+        //Title:      "My first todo",
+        //Body:       "Gotta work",
+        //Due:        time.Now(),
+        //Completed:  false,
+    //}
+
+    //db.Create(&todo)
+    router := mux.NewRouter().StrictSlash(true)
+    router.HandleFunc("/", Index)
+    fmt.Println("Listening on port 8888")
+    log.Fatal(http.ListenAndServe(":8888", router))
+}
+
+func Index(w http.ResponseWriter, r *http.Request) {
+    fmt.Fprintf(w, "Hello, %q", html.EscapeString(r.URL.Path))
 }
 
