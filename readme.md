@@ -18,11 +18,13 @@ edit config/database.yml with your mysql credentials
 
 `./db_ migrate` to create tables
 
+`./db_ seed`
+
 `go build server.go`
 
 `./server` start the server
 
-the setup and migrate scripts along with the server binary can all be run with an environment as defined in config/database.yml, e.g. `./db_ setup production` or `./server staging` - running without an environment will default to development
+the db&#95; scripts along with the server binary can all be run with an environment as defined in config/database.yml, e.g. `./db_ setup production` or `./server staging` - running without an environment will default to development
 
 install and run the client (coming soon)
 

@@ -2,13 +2,16 @@ package models
 
 import (
     "time"
-    "github.com/jinzhu/gorm"
 )
 
 type Todo struct {
-    gorm.Model
-    Title       string      `gorm:"size:255"`
-    Body        string
-    Due         time.Time
-    Completed   bool
+    ID          uint        `gorm:"primary_key" json:"id"`
+    CreatedAt time.Time     `json:"created_at"`
+    UpdatedAt time.Time     `json:"updated_at"`
+    DeletedAt *time.Time    `json:"-"`
+    Title       string      `json:"title"`
+    Description string      `json:"description"`
+    Due         time.Time   `json:"due"`
+    Completed   bool        `json:"completed"`
 }
+

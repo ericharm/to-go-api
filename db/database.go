@@ -31,6 +31,8 @@ func GetConnectionString(env string, exists bool) string {
         list = append(list, envConfig["database"])
     }
 
+    list = append(list, "?parseTime=true")
+
     var str bytes.Buffer
     for _, l := range list {
         str.WriteString(l)
