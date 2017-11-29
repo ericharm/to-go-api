@@ -8,19 +8,19 @@ clone this repo
 
 `cd to-go`
 
+edit config/database.yml with your mysql credentials
+
 `go get`
 
-On Mac, `export GOBIN=$GOPATH/bin` sometimes comes in handy
+`go build`
 
-edit config/database.yml with your mysql credentials
+On Mac, `export GOBIN=$GOPATH/bin` sometimes comes in handy
 
 `./db_ setup` to create a database
 
 `./db_ migrate` to create tables
 
 `./db_ seed`
-
-`go build`
 
 `./to-go` start the server
 

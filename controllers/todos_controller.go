@@ -98,7 +98,7 @@ func TodoDelete(w http.ResponseWriter, r *http.Request) {
     todoId := vars["todoId"]
     todo := models.Todo{}
     db_.Find(&todo, todoId)
-    db_.Delete(&todo)
+    db_.Delete(&todo, todoId)
 
     w.Header().Set("Content-Type", "application/json; charset=UTF-8")
     w.WriteHeader(http.StatusCreated)
