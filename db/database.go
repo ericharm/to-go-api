@@ -17,21 +17,62 @@ import (
 
 var activeDB *gorm.DB
 
-func InitDB(env string) {
-    // open the database
+func InitDB(env string) *gorm.DB {
     gormDb, err := ConnectGorm(env)
     if err != nil {
         panic(err)
     }
     activeDB = gormDb
+    return activeDB
 }
 
 func GetActiveDB() *gorm.DB {
     return activeDB
 }
 
-func GetConnectionString(env string, exists bool) string {
-    dbConfig, err := MapConfig();
+func ConnectSql(env string) (*sql.DB, error) {
+    dbConfig, err := mapConfig()
+    driver := dbConfig[env]["driver"]
+    db, err := sql.Open(driver, getConnectionString(env, true))
+    return db, err
+}
+
+func ConnectGorm(env string) (*gorm.DB, error) {
+    dbConfig, err := mapConfig()
+    driver := dbConfig[env]["driver"]
+
+    db, err := gorm.Open(driver, getConnectionString(env, true))
+    return db, err
+}
+
+func CreateDatabase(env string) {
+    dbConfig, err := mapConfig()
+    driver := dbConfig[env]["driver"]
+
+    db, err := sql.Open(driver, getConnectionString(env, false))
+    if err != nil {
+        fmt.Println(err)
+    }
+    defer db.Close()
+
+    envConfig := dbConfig[env]
+    _, err = db.Exec("CREATE DATABASE " + envConfig["database"])
+    if err == nil {
+        fmt.Printf("DB '%s' Created.\n", envConfig["database"])
+    } else {
+        panic(err)
+    }
+
+    _, err = db.Exec("USE " + envConfig["database"])
+    if err == nil {
+        fmt.Printf("Using %s\n", envConfig["database"])
+    } else {
+        panic(err)
+    }
+}
+
+func getConnectionString(env string, exists bool) string {
+    dbConfig, err := mapConfig();
 
     if err != nil {
         panic(err)
@@ -55,7 +96,7 @@ func GetConnectionString(env string, exists bool) string {
     return str.String()
 }
 
-func MapConfig() (map[string]map[string]string, error) {
+func mapConfig() (map[string]map[string]string, error) {
     dbYaml, err := ioutil.ReadFile("./config/database.yml")
     dbConfig := make(map[string]map[string]string)
     err = yaml.Unmarshal([]byte(dbYaml), &dbConfig)
@@ -63,46 +104,5 @@ func MapConfig() (map[string]map[string]string, error) {
         log.Fatalf("error: %v", err)
     }
     return dbConfig, err
-}
-
-func ConnectSql(env string) (*sql.DB, error) {
-    dbConfig, err := MapConfig()
-    driver := dbConfig[env]["driver"]
-    db, err := sql.Open(driver, GetConnectionString(env, true))
-    return db, err
-}
-
-func ConnectGorm(env string) (*gorm.DB, error) {
-    dbConfig, err := MapConfig()
-    driver := dbConfig[env]["driver"]
-
-    db, err := gorm.Open(driver, GetConnectionString(env, true))
-    return db, err
-}
-
-func CreateDatabase(env string) {
-    dbConfig, err := MapConfig()
-    driver := dbConfig[env]["driver"]
-
-    db, err := sql.Open(driver, GetConnectionString(env, false))
-    if err != nil {
-        fmt.Println(err)
-    }
-    defer db.Close()
-
-    envConfig := dbConfig[env]
-    _, err = db.Exec("CREATE DATABASE " + envConfig["database"])
-    if err == nil {
-        fmt.Printf("DB '%s' Created.\n", envConfig["database"])
-    } else {
-        panic(err)
-    }
-
-    _, err = db.Exec("USE " + envConfig["database"])
-    if err == nil {
-        fmt.Printf("Using %s\n", envConfig["database"])
-    } else {
-        panic(err)
-    }
 }
 
