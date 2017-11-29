@@ -15,6 +15,21 @@ import (
     _ "github.com/jinzhu/gorm/dialects/mysql"
 )
 
+var activeDB *gorm.DB
+
+func InitDB(env string) {
+    // open the database
+    gormDb, err := ConnectGorm(env)
+    if err != nil {
+        panic(err)
+    }
+    activeDB = gormDb
+}
+
+func GetActiveDB() *gorm.DB {
+    return activeDB
+}
+
 func GetConnectionString(env string, exists bool) string {
     dbConfig, err := MapConfig();
 

@@ -15,3 +15,5 @@ type Todo struct {
     Completed   bool        `json:"completed"`
 }
 
+type Todos []Todo
+
