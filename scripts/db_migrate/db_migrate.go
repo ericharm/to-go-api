@@ -3,8 +3,8 @@ package main
 import (
     "fmt"
     "os"
-    "../../models"
-    "../../db"
+    "to-go/models"
+    "to-go/db"
 )
 
 func main() {

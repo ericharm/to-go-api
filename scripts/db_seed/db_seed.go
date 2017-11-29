@@ -4,8 +4,8 @@ import (
     "fmt"
     "os"
     "time"
-    "../../models"
-    "../../db"
+    "to-go/models"
+    "to-go/db"
 )
 
 func main() {
