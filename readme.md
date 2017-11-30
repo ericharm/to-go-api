@@ -26,7 +26,11 @@ On Mac, `export GOBIN=$GOPATH/bin` sometimes comes in handy
 
 the db&#95; scripts along with the server binary can all be run with an environment as defined in config/database.yml, e.g. `./db_ setup production` or `./server staging` - running without an environment will default to development
 
-install and run the client (coming soon)
+### To do
+
+Add custom messages to json responses
+
+Build a client app
 
 ### Resources
 
