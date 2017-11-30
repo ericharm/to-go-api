@@ -1,6 +1,6 @@
 # to-go api
 
-*Up and running*
+### Up and running
 
 `cd $GOPATH/../src`
 
@@ -28,7 +28,7 @@ the db&#95; scripts along with the server binary can all be run with an environm
 
 install and run the client (coming soon)
 
-*Resources*
+### Resources
 
 [https://thenewstack.io/make-a-restful-json-api-go/](https://thenewstack.io/make-a-restful-json-api-go/) - The overall design and a good deal of the code comes straight from this article. The author (Cory Lanou) leaves it to the reader to hook the API into a database, which is what this project has set out to do.
 
