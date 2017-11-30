@@ -4,7 +4,7 @@
 
 `cd $GOPATH/../src`
 
-clone this repo
+`git clone https://github.com/ericharm/to-go.git`
 
 `cd to-go`
 
