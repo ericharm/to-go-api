@@ -2,7 +2,7 @@
 
 ### Up and running
 
-`cd $GOPATH/../src`
+`cd $GOPATH/src`
 
 `git clone https://github.com/ericharm/to-go.git`
 
