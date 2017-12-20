@@ -4,21 +4,21 @@ ENVIRONMENT=$2
 
 if [ "$COMMAND" == "setup" ]; then
     if [ "$ENVIRONMENT" == "" ]; then
-        go run scripts/db_setup/db_setup.go
+        go run db/setup/setup.go
     else
-        go run scripts/db_setup/db_setup.go $ENVIRONMENT
+        go run db/setup/setup.go $ENVIRONMENT
     fi
 elif [ "$COMMAND" == "migrate" ]; then
     if [ "$ENVIRONMENT" == "" ]; then
-        go run scripts/db_migrate/db_migrate.go
+        go run db/migrations/migrations.go
     else
-        go run scripts/db_migrate/db_migrate.go $ENVIRONMENT
+        go run db/migrations/migrations.go $ENVIRONMENT
     fi
 elif [ "$COMMAND" == "seed" ]; then
     if [ "$ENVIRONMENT" == "" ]; then
-        go run scripts/db_seed/db_seed.go
+        go run db/seeds/seeds.go
     else
-        go run scripts/db_seed/db_seed.go $ENVIRONMENT
+        go run db/seeds/seeds.go $ENVIRONMENT
     fi
 else
     echo "Invalid command"

@@ -4,8 +4,7 @@ import (
     "os"
     "log"
     "net/http"
-
-    "to-go/db"
+    "to-go/storage"
 )
 
 func main() {
@@ -14,7 +13,7 @@ func main() {
         env = os.Args[1]
     }
 
-    DB := db.InitDB(env)
+    DB := storage.InitDB(env)
 
     router := NewRouter()
     log.Println("Listening on port 8888")

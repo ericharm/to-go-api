@@ -4,7 +4,7 @@ import (
     "fmt"
     "os"
     "to-go/models"
-    "to-go/db"
+    "to-go/storage"
 )
 
 func main() {
@@ -14,7 +14,7 @@ func main() {
     }
 
     // open the database
-    db, err := db.ConnectGorm(env)
+    db, err := storage.ConnectGorm(env)
     if err != nil {
         panic(err)
     }
@@ -22,6 +22,9 @@ func main() {
     // put all migrations here
     db.AutoMigrate(&models.Todo{})
     fmt.Println("AutoMigrating Todos.")
+
+    db.AutoMigrate(&models.User{})
+    fmt.Println("AutoMigrating Users.")
 
     fmt.Println("Schema up to date.")
 

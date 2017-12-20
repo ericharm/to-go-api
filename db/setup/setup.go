@@ -3,7 +3,7 @@ package main
 import (
     "fmt"
     "os"
-    "to-go/db"
+    "to-go/storage"
 )
 
 func main() {
@@ -13,20 +13,20 @@ func main() {
     }
 
     // open the database
-    sqlDb, err := db.ConnectSql(env)
+    db, err := storage.ConnectSql(env)
     if err != nil {
         panic(err)
     }
 
     //validate the database exists
-    err = sqlDb.Ping()
+    err = db.Ping()
     if err != nil {
         fmt.Println(err)
-        db.CreateDatabase(env)
+        storage.CreateDatabase(env)
     } else {
         fmt.Println("DB validated")
     }
 
-    defer sqlDb.Close()
+    defer db.Close()
 }
 

@@ -1,53 +1,73 @@
 package controllers
 
 import (
+    "crypto/sha256"
+    "encoding/base64"
     "encoding/json"
-    "net/http"
+    "github.com/gorilla/mux"
     "io"
     "io/ioutil"
+    "net/http"
     "to-go/models"
     "to-go/storage"
-    "github.com/gorilla/mux"
-    "strings"
+    "math/rand"
+    "time"
 )
 
-type TodoRequest struct {
-    Todo models.Todo
-    AuthToken string
+type LoginAttempt struct {
+    Email      string        `json:"email"`
+    Password   string        `json:"password"`
 }
 
-type TodoFailResponse struct {
+type LoginFailResponse struct {
     Message    string `json:"message"`
 }
 
-func newTodoFailResponse() TodoFailResponse {
-    response := TodoFailResponse{}
-    response.Message = "Could not find a todo item with the given ID."
+var r *rand.Rand // Rand for this package.
+
+func init() {
+    r = rand.New(rand.NewSource(time.Now().UnixNano()))
+}
+
+func randomString(strlen int) string {
+    const chars = "abcdefghijklmnopqrstuvwxyz0123456789"
+    result := make([]byte, strlen)
+    for i := range result {
+        result[i] = chars[r.Intn(len(chars))]
+    }
+    return string(result)
+}
+
+func newLoginFailResponse() LoginFailResponse {
+    response := LoginFailResponse{}
+    response.Message = "Invalid email address or password"
     return response
 }
 
-func TodosIndex(w http.ResponseWriter, r *http.Request) {
-    db := storage.GetActiveDB()
-    todos := models.Todos{}
-    authToken := strings.Join(r.Header["X-Auth-Token"], "")
-    db.Joins("join users on user_id = users.id").Where("users.auth_token = ?", authToken).Find(&todos)
-
-    w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-    w.WriteHeader(http.StatusOK)
-    if err := json.NewEncoder(w).Encode(todos); err != nil {
+func Login(w http.ResponseWriter, r *http.Request) {
+    login := LoginAttempt{}
+    body, err := ioutil.ReadAll(io.LimitReader(r.Body, 1048576))
+    if err != nil {
         panic(err)
     }
-}
+    if err := r.Body.Close(); err != nil {
+        panic(err)
+    }
+    if err := json.Unmarshal(body, &login); err != nil {
+        w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+        w.WriteHeader(422) // unprocessable entity
+        if err := json.NewEncoder(w).Encode(err); err != nil {
+            panic(err)
+        }
+    }
 
-func TodoShow(w http.ResponseWriter, r *http.Request) {
+    hash := hashPassword(login.Password)
     db := storage.GetActiveDB()
-    vars := mux.Vars(r)
-    todoId := vars["todoId"]
-    todo := models.Todo{}
-    db.Find(&todo, todoId)
+    user := models.User{}
+    db.Where("email = ? AND password_hash = ?", login.Email, hash).First(&user)
 
-    if todo.ID == 0 {
-        response := newTodoFailResponse()
+    if user.ID == 0 {
+        response := newLoginFailResponse()
         w.Header().Set("Content-Type", "application/json; charset=UTF-8")
         w.WriteHeader(404)
         if err := json.NewEncoder(w).Encode(&response); err != nil {
@@ -56,16 +76,19 @@ func TodoShow(w http.ResponseWriter, r *http.Request) {
         return
     }
 
+    // refresh auth token here
+    user.AuthToken = randomString(32)
+    db.Save(&user)
     w.Header().Set("Content-Type", "application/json; charset=UTF-8")
     w.WriteHeader(http.StatusOK)
-    if err := json.NewEncoder(w).Encode(todo); err != nil {
+    if err := json.NewEncoder(w).Encode(&user); err != nil {
         panic(err)
     }
 }
 
-func TodoCreate(w http.ResponseWriter, r *http.Request) {
+func UserCreate(w http.ResponseWriter, r *http.Request) {
     db := storage.GetActiveDB()
-    todo :=  models.Todo{}
+    todo := models.Todo{}
     body, err := ioutil.ReadAll(io.LimitReader(r.Body, 1048576))
     if err != nil {
         panic(err)
@@ -89,7 +112,7 @@ func TodoCreate(w http.ResponseWriter, r *http.Request) {
     }
 }
 
-func TodoUpdate(w http.ResponseWriter, r *http.Request) {
+func UserUpdate(w http.ResponseWriter, r *http.Request) {
     db := storage.GetActiveDB()
     vars := mux.Vars(r)
     todoId := vars["todoId"]
@@ -119,7 +142,7 @@ func TodoUpdate(w http.ResponseWriter, r *http.Request) {
     }
 }
 
-func TodoDelete(w http.ResponseWriter, r *http.Request) {
+func UserDelete(w http.ResponseWriter, r *http.Request) {
     db := storage.GetActiveDB()
     vars := mux.Vars(r)
     todoId := vars["todoId"]
@@ -134,4 +157,11 @@ func TodoDelete(w http.ResponseWriter, r *http.Request) {
     }
 
 }
+
+func hashPassword(password string) string {
+    crypt := sha256.New()
+    crypt.Write([]byte(password))
+    return base64.URLEncoding.EncodeToString(crypt.Sum(nil))
+}
+
 
