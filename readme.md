@@ -29,7 +29,7 @@ the db&#95; scripts along with the server binary can all be run with an environm
 
 ### Resources
 
-[https://thenewstack.io/make-a-restful-json-api-go/](https://thenewstack.io/make-a-restful-json-api-go/) - The overall design and a good deal of the code comes straight from this article. The author (Cory Lanou) leaves it to the reader to hook the API into a database, which is what this project sets out to do.
+[https://thenewstack.io/make-a-restful-json-api-go/](https://thenewstack.io/make-a-restful-json-api-go/) - The overall design and a good deal of the code comes straight from this article. The author (Cory Lanou) leaves it to the reader to hook the API into a database, which is what this project sets out to do. I have also implemented very basic authentication.
 
 [http://jinzhu.me/gorm/](http://jinzhu.me/gorm/)
 
