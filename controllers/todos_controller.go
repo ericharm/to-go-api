@@ -14,6 +14,7 @@ func TodosIndex(w http.ResponseWriter, r *http.Request) {
     db := storage.GetActiveDB()
     user := Authenticate(r, db)
 
+    // dry this out
     if user.ID == 0 {
         RespondWithMessage(w, "Unable to authenticate user.")
         return
