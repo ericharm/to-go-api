@@ -3,6 +3,7 @@ package main
 import (
     "net/http"
     "to-go/controllers"
+    "github.com/gorilla/handlers"
     "github.com/gorilla/mux"
 )
 
@@ -15,7 +16,8 @@ type Route struct {
 
 type Routes []Route
 
-func NewRouter() *mux.Router {
+//func NewRouter() *mux.Router {
+func NewRouter() http.Handler {
 
     router := mux.NewRouter().StrictSlash(true)
     for _, route := range routes {
@@ -26,7 +28,11 @@ func NewRouter() *mux.Router {
             Handler(route.HandlerFunc)
     }
 
-    return router
+    return handlers.CORS(
+        handlers.AllowedOrigins([]string{"*"}),
+        handlers.AllowedMethods([]string{"OPTIONS", "DELETE", "GET", "HEAD", "POST"}),
+        handlers.AllowedHeaders([]string{"Content-Type", "X-Requested-With"}),
+    )(router)
 }
 
 var routes = Routes{
@@ -40,7 +46,7 @@ var routes = Routes{
 
     Route{ "POST", "/login", "Login", controllers.Login, },
     // get this one working and validate email format and password length
-    Route{ "POST", "/users", "UserCreate", controllers.UserCreate, },
+    Route{ "POST", "/signup", "UserCreate", controllers.UserCreate, },
     // secure these two endpoints with auth token
     Route{ "PUT", "/users/{userId}", "UserUpdate", controllers.UserUpdate, },
     Route{ "DELETE", "/users/{userId}", "UserDelete", controllers.UserDelete, },
