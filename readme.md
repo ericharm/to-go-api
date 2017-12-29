@@ -6,7 +6,7 @@
 
 `git clone https://github.com/ericharm/to-go.git`
 
-`cd to-go`
+`cd to-go-api`
 
 edit config/database.yml with your mysql credentials
 
@@ -25,6 +25,7 @@ On Mac, `export GOBIN=$GOPATH/bin` sometimes comes in handy
 `./to-go` start the server
 
 the db&#95; scripts along with the server binary can all be run with an environment as defined in config/database.yml, e.g. `./.db setup production` or `./server staging` - running without an environment will default to development
+
 
 
 ### Resources
