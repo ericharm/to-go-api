@@ -31,7 +31,7 @@ func NewRouter() http.Handler {
     return handlers.CORS(
         handlers.AllowedOrigins([]string{"*"}),
         handlers.AllowedMethods([]string{"OPTIONS", "DELETE", "GET", "HEAD", "POST"}),
-        handlers.AllowedHeaders([]string{"Content-Type", "X-Requested-With"}),
+        handlers.AllowedHeaders([]string{"Content-Type", "X-Requested-With", "X-AUTH-TOKEN"}),
     )(router)
 }
 

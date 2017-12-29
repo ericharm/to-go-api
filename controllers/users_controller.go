@@ -79,7 +79,7 @@ func UserCreate(w http.ResponseWriter, r *http.Request) {
     // validate email address format
     err = emailx.Validate(signup.Email)
     if err != nil {
-        RespondWithMessage(w, "Invalid email format for email.")
+        RespondWithMessage(w, "Invalid format for email.")
         return
     }
 
