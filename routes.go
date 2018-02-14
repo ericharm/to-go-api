@@ -45,9 +45,7 @@ var routes = Routes{
     Route{ "DELETE", "/todos/{todoId}", "TodoDelete", controllers.TodoDelete, },
 
     Route{ "POST", "/login", "Login", controllers.Login, },
-    // get this one working and validate email format and password length
     Route{ "POST", "/signup", "UserCreate", controllers.UserCreate, },
-    // secure these two endpoints with auth token
     Route{ "PUT", "/users/{userId}", "UserUpdate", controllers.UserUpdate, },
     Route{ "DELETE", "/users/{userId}", "UserDelete", controllers.UserDelete, },
 }
