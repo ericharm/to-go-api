@@ -22,21 +22,11 @@ type LoginAttempt struct {
 }
 
 func Login(w http.ResponseWriter, r *http.Request) {
-    // dry this out
     login := LoginAttempt{}
-    body, err := ioutil.ReadAll(io.LimitReader(r.Body, 1048576))
-    if err != nil {
-        panic(err)
-    }
-    if err := r.Body.Close(); err != nil {
-        panic(err)
-    }
+    body := getBody(r)
+
     if err := json.Unmarshal(body, &login); err != nil {
-        w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-        w.WriteHeader(422) // unprocessable entity
-        if err := json.NewEncoder(w).Encode(err); err != nil {
-            panic(err)
-        }
+        unprocessableEntity(w, err)
     }
 
     hash := hashPassword(login.Password)
@@ -59,25 +49,15 @@ func Login(w http.ResponseWriter, r *http.Request) {
 }
 
 func UserCreate(w http.ResponseWriter, r *http.Request) {
-    // dry this out
     signup := LoginAttempt{}
-    body, err := ioutil.ReadAll(io.LimitReader(r.Body, 1048576))
-    if err != nil {
-        panic(err)
-    }
-    if err := r.Body.Close(); err != nil {
-        panic(err)
-    }
+    body := getBody(r)
+
     if err := json.Unmarshal(body, &signup); err != nil {
-        w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-        w.WriteHeader(422) // unprocessable entity
-        if err := json.NewEncoder(w).Encode(err); err != nil {
-            panic(err)
-        }
+        unprocessableEntity(w, err)
     }
 
     // validate email address format
-    err = emailx.Validate(signup.Email)
+    err := emailx.Validate(signup.Email)
     if err != nil {
         RespondWithMessage(w, "Invalid format for email.")
         return
@@ -121,24 +101,15 @@ func UserUpdate(w http.ResponseWriter, r *http.Request) {
     todo := models.Todo{}
     db.Find(&todo, todoId)
 
-    body, err := ioutil.ReadAll(io.LimitReader(r.Body, 1048576))
-    if err != nil {
-        panic(err)
-    }
-    if err := r.Body.Close(); err != nil {
-        panic(err)
-    }
+    body := getBody(r)
+
     if err := json.Unmarshal(body, &todo); err != nil {
-        w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-        w.WriteHeader(422) // unprocessable entity
-        if err := json.NewEncoder(w).Encode(err); err != nil {
-            panic(err)
-        }
+      unprocessableEntity(w, err)
     }
 
     db.Save(&todo)
     w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-    w.WriteHeader(http.StatusCreated)
+    w.WriteHeader(http.StatusAccepted)
     if err := json.NewEncoder(w).Encode(&todo); err != nil {
         panic(err)
     }
@@ -153,7 +124,7 @@ func UserDelete(w http.ResponseWriter, r *http.Request) {
     db.Delete(&todo, todoId)
 
     w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-    w.WriteHeader(http.StatusCreated)
+    w.WriteHeader(http.StatusAccepted)
     if err := json.NewEncoder(w).Encode(&todo); err != nil {
         panic(err)
     }
@@ -161,6 +132,25 @@ func UserDelete(w http.ResponseWriter, r *http.Request) {
 }
 
 // private
+
+func getBody(r *http.Request) ([]byte) {
+    body, err := ioutil.ReadAll(io.LimitReader(r.Body, 1048576))
+    if err != nil {
+        panic(err)
+    }
+    if err := r.Body.Close(); err != nil {
+        panic(err)
+    }
+    return body
+}
+
+func unprocessableEntity(w http.ResponseWriter, err error) {
+    w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+    w.WriteHeader(422) // unprocessable entity
+    if err := json.NewEncoder(w).Encode(err); err != nil {
+        panic(err)
+    }
+}
 
 var randomizer *rand.Rand // Rand for this package.
 
